@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=`, initial-scale=1.0">
+    <title>柱状图</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: rgba(169, 172, 160, 0.781);
+        }
+    </style>
+    <script src="https://unpkg.com/konva@8/konva.min.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        var stage = new Konva.Stage({
+            container : 'container',
+            width : window.innerWidth,
+            height : window.innerHeight
+        });
+        
+        var layer = new Konva.Layer();
+        stage.add(layer);
+
+        var cenX = stage.width() / 2;
+        var cenY = stage.height() / 2;
+
+        // data;
+        var data = [
+            {name : 'Web',   value : '.7',color : 'green'},
+            {name : 'ps',  value : '.3',color : 'blue'},
+            {name : 'C',     value : '.3',color : 'red'},
+            {name : 'c4d',value : '.4',color : 'orange'},
+            {name : 'java',    value : '.4',color : 'purple'},
+            {name : 'literacy',   value : '.3',color : 'pink'},
+        ];
+
+        var x0 = 1/8 * stage.width();  // 柱状图原点坐标
+        var y0 = 3/4 * stage.height();
+
+        var width = 3/4 * stage.width();  // 柱状图最大宽高
+        var height = 1/2 * stage.height();
+
+        // 绘制直线
+        var bsLine = new Konva.Line({
+            // 尽量使用百分比宽高  兼容PC和手机端
+            points : [x0,y0,x0 + width,y0],
+            strokeWidth : 1,
+            stroke : 'lightgreen'
+        });
+
+        layer.add(bsLine);
+
+        var rectWidth = width / data.length;
+        // 遍历数据  生成矩形
+
+        // forEach 是EcamScript5 后新增的语法  可以替代for循环
+        // 数组的方法
+        // ie9 ++支持
+        data.forEach(function(item,index){
+            // item  data的每一条数据  item = data[i]
+            // index data的索引       index = i
+            var rect = new Konva.Rect({
+                x : x0 + (1/4 + index) * rectWidth,
+                y : y0 - item.value * height,
+                width : 1/2 * rectWidth,
+                height : item.value * height,
+                fill : item.color,
+                opacity : .8,
+                cornerRadius : 10,
+            });
+            layer.add(rect);
+
+            // 将百分比位子放到柱状图顶部
+            var text = new Konva.Text({
+                x :  x0 + index * rectWidth,  // 文字居中1
+                y : y0 - item.value * height -14,
+                fontSize : 14,
+                text : item.value * 100 + '%',
+                fill : item.color,
+                width : rectWidth,  // 文字居中2
+                align : 'center',  // 文字居中3
+                name : 'textPerson',
+            });
+
+            layer.add(text);
+
+            var group = new Konva.Group({
+                x : x0 + (1 / 4 + index) * rectWidth,
+                y : y0,
+            });
+            // 将百分比位子放到柱状图顶部
+            var textBottom = new Konva.Text({
+                x : 0,  // 文字居中1
+                y : 0,
+                fontSize : 14,
+                text : item.name,
+                fill : item.color,
+                //width : rectWidth,  // 文字居中2
+                //align : 'center',  // 文字居中3
+                rotation : 30,
+            });
+
+            group.add(textBottom);
+            layer.add( group );
+        });
+        layer.draw();
+
+        // 动画层
+        stage.addEventListener('touchstart',function(){
+            for(var i = 0;i < layer.find('Rect').length;i++){
+                // 不知为何  我们无法使用简洁的getChildren.each()方法
+                //  因此在此处使用for循环遍历添加方法
+                layer.find('Rect')[i].y(y0);
+                layer.find('Rect')[i].height(0);
+
+                layer.find('Rect')[i].to({
+                    duration : 1,
+                    y : y0 - data[i].value * height,
+                    height : data[i].value * height,
+                });
+            }
+
+            // 文字动画
+            for(var i = 0;i < layer.find('.textPerson').length;i++){
+                layer.find('.textPerson')[i].y(y0 - 14);
+                layer.find('.textPerson')[i].to({
+                    duration : 1,
+                    y : y0 - data[i].value * height - 14,
+                });
+            }
+        });
+
+        stage.on('click',function(){
+            // 让柱状图进行动画
+
+            // 让柱状图的所有矩形 height : 0, y -> y0
+            // get所有矩形
+            for(var i = 0;i < layer.find('Rect').length;i++){
+                // 不知为何  我们无法使用简洁的getChildren.each()方法
+                //  因此在此处使用for循环遍历添加方法
+                layer.find('Rect')[i].y(y0);
+                layer.find('Rect')[i].height(0);
+
+                layer.find('Rect')[i].to({
+                    duration : 1,
+                    y : y0 - data[i].value * height,
+                    height : data[i].value * height,
+                });
+            }
+
+            // 文字动画
+            for(var i = 0;i < layer.find('.textPerson').length;i++){
+                layer.find('.textPerson')[i].y(y0 - 14);
+                layer.find('.textPerson')[i].to({
+                    duration : 1,
+                    y : y0 - data[i].value * height - 14,
+                });
+            }
+        });
+    </script>
+</body>
+</html>

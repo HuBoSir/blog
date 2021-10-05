@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: rgba(78, 75, 75, 0.568);
+        }
+    </style>
+     <script src="https://unpkg.com/konva@8/konva.min.js"></script>s
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        // 创建舞台
+        var stage = new Konva.Stage({
+            container : 'container',
+            width : window.innerWidth,
+            height : window.innerHeight,
+        });
+
+        // 定义中心点坐标
+        var cenX = stage.width() / 2;
+        var cenY = stage.height() / 2;
+        
+        // 背景层
+        var bgLayer = new Konva.Layer();
+        stage.add(bgLayer);
+
+        // 内圆外圆的半径
+        var innerRadius = 252 / 2;
+        var outerRadius = 440 / 2;
+
+        // 绘制背景的内圆
+        var innerCircle = new Konva.Circle({
+            x : cenX,
+            y : cenY,
+            radius : innerRadius,
+            stroke : '#ccc',
+            strokeWidth : 4,
+            dash : [10,4],  // 设置虚线  10实线  4像素空
+        });
+
+        bgLayer.add(innerCircle);
+
+        // 绘制背景的外圆
+        var outerCircle = new Konva.Circle({
+            x : cenX,
+            y : cenY,
+            radius : outerRadius,
+            stroke : '#ccc',
+            strokeWidth : 4,
+            dash : [10,4],  // 设置虚线  10实线  4像素空
+        });
+
+        bgLayer.add(outerCircle);
+
+
+    </script>
+    <script>
+function CircleText(options){
+    this._init(options);
+};
+CircleText.prototype = {
+    _init : function(options){
+        this.x = options.x || 0;
+        this.y = options.y || 0;
+        this.innerRadius = options.innerRadius || 0;
+        this.outerRadius = options.outerRadius || 0;
+        this.text = options.text || 'canvas';
+        this.innerStyle = options.innerStyle || 'red';
+        this.outerStyle = options.outerStyle || 'blue';
+
+        this.group = new Konva.Group({
+            x : this.x,
+            y : this.y,
+            draggable : true,
+        });
+
+        // 创建内部圆
+        var innerCircle = new Konva.Circle({
+            x : 0,
+            y : 0,
+            radius : this.innerRadius,
+            fill : this.innerStyle,
+            opacity : .8,
+        });
+        this.group.add(innerCircle);
+
+        // 创建圆环（阴影）
+        var outerRing = new Konva.Ring({
+            x :0,
+            y :0,
+            innerRadius: this.innerRadius,
+            outerRadius : this.outerRadius,
+            fill : this.outerStyle,
+            opacity : .3,
+        });
+        this.group.add(outerRing);
+
+        // 创建文字
+        var text = new Konva.Text({
+            x : 0 - this.outerRadius,
+            y : -7,
+            width : this.outerRadius * 2,
+            fill : '#fff',
+            fontSize : 17,
+            text: this.text,
+            align: 'center',
+            fontStyle : 'bold',
+        });
+        this.group.add(text);
+    },
+
+    addToGroupOrLayer : function(arg){
+        arg.add(this.group);
+    }
+}
+    </script>
+    <script>
+                // 绘制中心的圆--Web全栈
+        var cenCircleText = new CircleText({
+            x : cenX,
+            y : cenY,
+            innerRadius : 132 / 2,
+            outerRadius : 90,
+            innerStyle : '#525a82',
+            outerStyle : '#e1e1e1',
+            text : '可以拖动哦',
+        });
+        cenCircleText.addToGroupOrLayer(bgLayer);
+        bgLayer.draw();
+
+        
+        // 动画层
+        var animateLayer = new Konva.Layer();
+        stage.add(animateLayer);
+
+        // 计算坐标
+        var x0 = cenX + innerRadius * Math.cos(-60 * Math.PI / 180);
+        var y0 = cenY + innerRadius * Math.sin(-60 * Math.PI / 180);
+
+        var L2Group = new Konva.Group({
+            x : cenX,
+            y : cenY,
+        });
+        
+        // 添加c3
+        var L2_cenCircleText_c3 = new CircleText({
+            x : innerRadius * Math.cos(160 * Math.PI / 180),
+            y : innerRadius * Math.sin(160 * Math.PI / 180),
+            innerRadius : 30,
+            outerRadius : 40,
+            innerStyle : '#faced6',
+            outerStyle : '#e1e1e1',
+            text : 'CSS3',
+        });
+        L2_cenCircleText_c3.addToGroupOrLayer(L2Group);
+
+        // 添加h5
+        var L2_cenCircleText_h5 = new CircleText({
+            x : innerRadius * Math.cos(-60 * Math.PI / 180),
+            y : innerRadius * Math.sin(-60 * Math.PI / 180),
+            innerRadius : 30,
+            outerRadius : 40,
+            innerStyle : 'orange',
+            outerStyle : '#e1e1e1',
+            text : 'HTML5',
+        });
+        L2_cenCircleText_h5.addToGroupOrLayer(L2Group);
+
+        // 第二层的组添加到animateLayer
+        animateLayer.add(L2Group);
+        
+        var L3Group = new Konva.Group({
+            x : cenX,
+            y : cenY,
+        });
+
+        // 绘制3环圆  javascript
+        var l3_cenCircleText_js = new CircleText({
+            x : outerRadius * Math.cos(60 * Math.PI / 180),
+            y : outerRadius * Math.sin(60 * Math.PI / 180),
+            innerRadius : 40,
+            outerRadius : 50,
+            innerStyle : '#918ff8',
+            outerStyle : '#e1e1e1',
+            text : 'javascript',
+        });
+        l3_cenCircleText_js.addToGroupOrLayer(L3Group);
+
+        animateLayer.add(L3Group);
+
+        // 添加konva
+        var l3_cenCircleText_konva = new CircleText({
+            x : outerRadius * Math.cos(-15 * Math.PI / 180),
+            y : outerRadius * Math.sin(-15 * Math.PI / 180),
+            innerRadius : 40,
+            outerRadius : 50,
+            innerStyle : 'rgb(204,78,99)',
+            outerStyle : '#e1e1e1',
+            text : 'Konva',
+        });
+        l3_cenCircleText_konva.addToGroupOrLayer(L3Group);
+
+        // 添加Vue
+        var l3_cenCircleText_Vue = new CircleText({
+            x : outerRadius * Math.cos(190 * Math.PI / 180),
+            y : outerRadius * Math.sin(190 * Math.PI / 180),
+            innerRadius : 40,
+            outerRadius : 50,
+            innerStyle : 'rgb(122,201,137)',
+            outerStyle : '#e1e1e1',
+            text : 'Vue',
+        });
+        l3_cenCircleText_Vue.addToGroupOrLayer(L3Group);
+        
+        animateLayer.draw();
+
+        var rotateAnglePerSecond = 60;
+        // Konva 的帧动画系统
+        var animate = new Konva.Animation(function(frame){
+            // 每隔一会儿执行此方法，类似于setInterval
+
+            // 计算当前需要旋转的角度
+            // timeDiff 根据电脑的性能和浏览器状态动态变化  两帧之间的时间差  动态变化的
+            var rotateAngle = rotateAnglePerSecond * frame.timeDiff / 1000;  // 上一帧和当前帧的时间差  / 毫秒
+        
+            L2Group.rotate( rotateAngle );  // 参数为角度
+            // get二环上的内部组 使其反向旋转
+            /*L2Group.getChildren().each(function(item,index){
+                item.rotate( -rotateAngle );
+            });*/
+
+            for(var i = 0;i < L2Group.getChildren().length;i++){
+                L2Group.getChildren()[i].rotate(-rotateAngle);
+            }
+
+            L3Group.rotate( -rotateAngle );
+            // get二环上的内部组 使其反向旋转
+            /*L3Group.getChildren().each(function(item,index){
+                item.rotate( rotateAngle );
+            });*/
+
+            for(var i = 0;i < L3Group.getChildren().length;i++){
+                L3Group.getChildren()[i].rotate(rotateAngle);
+            }
+        },animateLayer);
+
+        animateLayer.on('mouseover',function(){
+            rotateAnglePerSecond = 15;
+        });
+
+        animateLayer.on('mouseout',function(){
+            rotateAnglePerSecond = 60;
+        });
+
+        animate.start();  // 启动动画
+    </script>
+</body>
+</html>
