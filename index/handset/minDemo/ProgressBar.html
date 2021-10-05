@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script src="https://unpkg.com/konva@8/konva.min.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        var stage = new Konva.Stage({
+            container : 'container',
+            width : window.innerWidth,
+            height : window.innerHeight,
+        });
+
+        var layer = new Konva.Layer();
+        stage.add(layer);
+
+        var cenX = stage.width() / 2;
+        var cenY = stage.height() / 2;
+
+    </script>
+    
+    <script>
+        function ProgressBar(options){
+    this._init(options);
+}
+
+ProgressBar.prototype = {
+    // 在类初始化时  将外部矩形内部矩形放置到group中
+    _init : function(options){
+        this.x = options.x || 0;
+        this.y = options.y || 0;
+        this.w = options.w || 0;
+        this.h = options.h || 0;
+
+        this.fillStyle = options.fillStyle || 'red';
+        this.strokeStyle = options.strokeStyle || 'blank';
+
+        // 定义内部进度条的矩形
+        var innerRect = new Konva.Rect({
+            x : this.x,
+            y : this.y,
+            // width : 1/2 * this.w,
+            width : 0,
+            // 内部进度条从哪里开始
+            height : this.h,
+            fill : this.fillStyle,
+            cornerRadius : 1/2 * this.h,
+            id : 'innerRect',
+            name : 'ss',
+        });
+
+        // 外边框矩形
+        var outerRect = new Konva.Rect({
+            x : this.x,
+            y : this.y,
+            width : this.w,
+            height : this.h,
+            stroke : this.strokeStyle,
+            strokeWidth : 4,
+            cornerRadius : 1/2 * this.h,
+        });
+        this.group = new Konva.Group({
+            x :0,
+            y :0,
+        });
+        this.group.add(innerRect);
+        this.group.add(outerRect);
+    },
+    changeValue : function(val){
+        // 传进来的进度
+        if (val > 1) { // 如果是1到100  转换为小数
+            val = val / 100;
+        }
+
+        var width = this.w * val; // 最终进度条内部矩形的宽度
+        var innerRect = this.group.findOne('#innerRect');
+        // var innerRect = this.group.findOne('Rect');   标签选择器
+
+        // to动画系统  让我们的物件变换到某个状态
+        // 从当前状态变换到下面设置的状态
+        innerRect.to({
+            width : width,
+            duration : 1.5,
+            esing : Konva.Easings.EasIn,
+        });
+    },
+    addToGroupOrLayer : function(layer){
+        layer.add(this.group);
+    }
+}
+    </script>
+    <script>
+                var p = new ProgressBar({
+            x : 1/8 * stage.width(),
+            y : 1/2 * stage.height(),
+            w : 3/4 * stage.width(),
+            h : 1/12 * stage.height(),
+            fillStyle : 'red',
+            strokeStyle : 'blank',
+        });
+
+        p.addToGroupOrLayer(layer);
+
+        layer.draw();
+
+        p.changeValue(1);
+    </script>
+</body>
+</html>

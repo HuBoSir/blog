@@ -1,0 +1,53 @@
+/*公共样式*/
+
+/*1.清除默认样式*/
+html,body,ul,li,a,img,p,div,form,input {
+    padding: 0;
+    margin: 0;
+
+    /*设置盒模型*/
+    /*box-sizing:border-box:  将边框设置在定义好的宽高之内（不会破坏布局）*/
+    box-sizing:border-box;
+
+    /*去除移动端特有的a标签高亮点击*/
+    -webkit-tap-highlight-color: transparent;
+}
+body {
+    font-family: "微软雅黑";
+    font-size: 13px;
+    overflow: hidden;
+}
+a,
+a:hover {
+    color: #666;
+   text-decoration: none;
+}
+ul,li,ol {
+    list-style: none;
+}
+input {
+    /*获取焦点时默认的边框清除阴影*/
+    outline:none;
+    /*去除边框*/
+    border:none;
+    /*增加边框*/
+    border: 1px solid #ccc;
+}
+/*2.添加新的样式*/
+.f_left {
+    float: left;
+}
+.f_right {
+    float: right;
+}
+
+/*伪类元素  用于清除浮动*/
+.clearfix::before,
+.clearfix::after {
+    content:'';
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden;
+}
